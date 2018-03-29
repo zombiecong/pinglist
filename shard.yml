@@ -1,0 +1,19 @@
+name: pinglist
+version: 0.1.0
+
+authors:
+  - caelums <ccaelums@gmail.com>
+
+targets:
+  pinglist:
+    main: src/pinglist.cr
+
+crystal: 0.24.1
+
+license: MIT
+
+
+dependencies:
+  commander:
+    github: mrrooijen/commander
+    version: ~> 0.3.3
