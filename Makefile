@@ -1,11 +1,17 @@
-
+program = pinglist
 
 build: bin
-	crystal build src/pinglist.cr -o ./bin/pinglist
+	crystal build src/$(program).cr -o ./bin/$(program)
 
 bin:
 	mkdir bin
 
 
 debug: build
-	./bin/pinglist -i test.txt -o result.txt
+	./bin/$(program)
+
+release: bin
+	crystal build src/$(program).cr -o ./bin/$(program)-release --release --static
+
+
+
