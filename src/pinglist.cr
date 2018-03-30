@@ -131,11 +131,11 @@ module Pinglist
 
       iplist = getIpList(infile, nums)
 
-      # iplist.each_slice(nums) do |slice|
-      #   ping(slice)
-      # end
+      iplist.each_slice(500) do |slice|
+        ping(slice)
+      end
       # puts iplist.size
-      ping(iplist)
+      # ping(iplist)
     end
   end
 
