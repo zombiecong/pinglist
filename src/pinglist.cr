@@ -1,5 +1,6 @@
 require "./pinglist/*"
 require "commander"
+require "bit_array"
 
 # TODO: Write documentation for `Pinglist`
 
@@ -8,11 +9,32 @@ def getIpList(filename : String)
 
   # version 1 , just add 1
   File.read_lines(filename).each { |a|
-    list = list + [a.gsub(/0\/[0-9]+$/, "1")]
+    list = list + ipParse(a)
   # ?\.[0-9]*\.[0-9]*\.(0)\/[0-9]*
   }
 
   list
+end
+
+def ipParse(ip : String)
+  r1 = ip.split("/")
+
+  n = 32 - r1[1].to_i
+
+  res = iptoint(r1[0])
+
+  r = (res >> n << n) + 1
+  r2 = r + (1 << n) - 2
+
+  # puts intoip(r)
+  # puts intoip(r2)
+
+  iplist = [] of String
+  (r...r2).each do |rnum|
+    # puts intoip(rnum)
+    iplist = iplist + [intoip(rnum)]
+  end
+  iplist
 end
 
 def ping(iplist : Array(String))
@@ -47,6 +69,24 @@ def ping(iplist : Array(String))
   our_file.close
 end
 
+def iptoint(ip : String)
+  r2 = ip.split(".")
+  res = 0.to_u32
+  r2.each_with_index do |num, i|
+    res = res | (num.to_u32 << ((r2.size - i - 1)*8))
+  end
+
+  res
+end
+
+def intoip(num : UInt32)
+  "#{getByte(num, 3)}.#{getByte(num, 2)}.#{getByte(num, 1)}.#{getByte(num, 0)}"
+end
+
+def getByte(num : UInt32, index : Int)
+  (num >> (8*index)) & 0xff
+end
+
 module Pinglist
   cli = Commander::Command.new do |cmd|
     cmd.use = "pinglist"
@@ -73,18 +113,10 @@ module Pinglist
       outfile = options.string["outfile"]
 
       iplist = getIpList(infile)
-
-      ping(iplist)
       # puts iplist
+      ping(iplist)
     end
   end
 
   Commander.run(cli, ARGV)
-
-  # iplist = getIpList("a.txt")
-
-  # ping(iplist)
-  # # puts iplist
-
-  # puts "test over"
 end
