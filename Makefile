@@ -8,7 +8,7 @@ bin:
 
 
 debug: build
-	./bin/$(program)
+	./bin/$(program) -i iplist.txt
 
 release: bin
 	crystal build src/$(program).cr -o ./bin/$(program)-release --release --static

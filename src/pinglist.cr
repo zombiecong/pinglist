@@ -113,8 +113,11 @@ module Pinglist
       outfile = options.string["outfile"]
 
       iplist = getIpList(infile)
-      # puts iplist
-      ping(iplist)
+      iplist.each_slice(100) do |slice|
+        ping(slice)
+      end
+      # puts iplist.size
+      # ping(iplist)
     end
   end
 
