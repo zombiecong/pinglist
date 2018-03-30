@@ -4,19 +4,19 @@ require "bit_array"
 
 # TODO: Write documentation for `Pinglist`
 
-def getIpList(filename : String)
+def getIpList(filename : String, size : Int)
   list = [] of String
 
   # version 1 , just add 1
   File.read_lines(filename).each { |a|
-    list = list + ipParse(a)
+    list = list + ipParse(a, size)
   # ?\.[0-9]*\.[0-9]*\.(0)\/[0-9]*
   }
 
   list
 end
 
-def ipParse(ip : String)
+def ipParse(ip : String, size : Int)
   r1 = ip.split("/")
 
   n = 32 - r1[1].to_i
@@ -30,7 +30,15 @@ def ipParse(ip : String)
   # puts intoip(r2)
 
   iplist = [] of String
-  (r...r2).each do |rnum|
+
+  endindex = 0
+  if r2 - r > size
+    endindex = size + r
+  else
+    endindex = r2
+  end
+
+  (r...endindex).each do |rnum|
     # puts intoip(rnum)
     iplist = iplist + [intoip(rnum)]
   end
@@ -112,7 +120,7 @@ module Pinglist
       flag.name = "nums"
       flag.short = "-n"
       flag.long = "--nums"
-      flag.default = 500
+      flag.default = 10
       flag.description = "once ping nums"
     end
 
@@ -121,12 +129,13 @@ module Pinglist
       outfile = options.string["outfile"]
       nums = options.int["nums"]
 
-      iplist = getIpList(infile)
-      iplist.each_slice(nums) do |slice|
-        ping(slice)
-      end
+      iplist = getIpList(infile, nums)
+
+      # iplist.each_slice(nums) do |slice|
+      #   ping(slice)
+      # end
       # puts iplist.size
-      # ping(iplist)
+      ping(iplist)
     end
   end
 
