@@ -108,12 +108,21 @@ module Pinglist
       flag.description = "ping test result"
     end
 
+    cmd.flags.add do |flag|
+      flag.name = "nums"
+      flag.short = "-n"
+      flag.long = "--nums"
+      flag.default = 500
+      flag.description = "once ping nums"
+    end
+
     cmd.run do |options, arguments|
       infile = options.string["infile"]
       outfile = options.string["outfile"]
+      nums = options.int["nums"]
 
       iplist = getIpList(infile)
-      iplist.each_slice(100) do |slice|
+      iplist.each_slice(nums) do |slice|
         ping(slice)
       end
       # puts iplist.size
