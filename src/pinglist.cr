@@ -58,7 +58,7 @@ def ping(iplist : Array(String))
     end
   }
 
-  our_file = File.open "result.txt", "w"
+  our_file = File.open "result.txt", "a"
 
   iplist.size.times do
     res = ch.receive
